@@ -1,0 +1,52 @@
+{
+  "profile_version": 1,
+  "name": "Example Candidate (fictional)",
+  "career": {
+    "target_roles": [
+      "Backend Software Engineer",
+      "Cloud Infrastructure Engineer"
+    ],
+    "years_experience": 4,
+    "seniority": [
+      "mid-level",
+      "senior (stretch)"
+    ],
+    "primary_technologies": [
+      "Python",
+      "AWS",
+      "SQL",
+      "Terraform"
+    ],
+    "secondary_technologies": [
+      "PostgreSQL",
+      "Docker"
+    ],
+    "exclude_claims_not_evidenced": true
+  },
+  "preferences": {
+    "country": "United States",
+    "home_region": "Example City, ST",
+    "remote": "preferred",
+    "allowed_locations": [
+      "US Remote",
+      "Example City, ST"
+    ],
+    "hard_constraints": [
+      "US-based opportunities"
+    ],
+    "company_tiers": [
+      "A",
+      "B",
+      "C"
+    ]
+  },
+  "scoring": {
+    "technical_fit": 35,
+    "experience_fit": 20,
+    "location": 20,
+    "company_priority": 15,
+    "compensation_and_direction": 10
+  },
+  "response_language": "en",
+  "time_zone": "America/New_York"
+}

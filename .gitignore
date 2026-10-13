@@ -1,0 +1,17 @@
+# Private user bindings and profiles
+config/*.local.json
+config/*.local.yaml
+config/*.local.yml
+.env
+.env.*
+local/
+private/
+output/
+*.sqlite3
+*.db
+*.pdf
+*.docx
+*.xlsx
+__pycache__/
+*.pyc
+.DS_Store

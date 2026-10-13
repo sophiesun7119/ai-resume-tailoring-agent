@@ -1,0 +1,22 @@
+{
+  "example_only": true,
+  "company": "ExampleCloud",
+  "official_career_url": "https://example.com/careers",
+  "open_jobs": [
+    {
+      "id": "demo-001",
+      "title": "Backend Engineer",
+      "job_url": "https://example.com/careers/demo-001",
+      "status": "New",
+      "fit": "direct Python APIs; AWS"
+    },
+    {
+      "id": "demo-002",
+      "title": "Platform Engineer",
+      "job_url": "https://example.com/careers/demo-002?utm_source=example",
+      "status": "Skip",
+      "fit": "Terraform"
+    }
+  ],
+  "applications": []
+}

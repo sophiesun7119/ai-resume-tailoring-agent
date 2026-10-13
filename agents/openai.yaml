@@ -1,0 +1,3 @@
+interface:
+  display_name: "Job Application Manager"
+  short_description: "Human-approved job review, resume tailoring, and application tracking."
