@@ -1,78 +1,93 @@
-# Job Application Manager
+# AI Resume Tailoring Agent
 
-An open, reusable **human-in-the-loop job application workflow** that connects official ATS job research, a Google Sheets tracker, a master resume, a career story bank, and a Google Drive output folder.
+**Turn a job description into an evidence-backed, role-specific resume—without inventing qualifications or overwriting the original.**
 
-This is the reusable **Job Application Manager** component. It is separate from the [ATS collector](https://github.com/sophiesun7119/search-job) and [scheduler-prompt generator](https://github.com/sophiesun7119/search-job-scheduler-prompt-tool). An optional fourth portfolio repository can explain the full lifecycle and link to all three.
+An open, reusable **human-approved AI skill** that compares a real job description (JD) with a candidate's Base/Master Resume and Career Story Bank, selects relevant experience, and helps create a formatted copy of the resume in Google Docs. Optional job discovery and Google Sheets tracking are supported, **not required**.
 
-## What you can do
+> This is an instruction-driven skill for a compatible AI assistant with authorized Google Docs/Drive and web/PDF tools. It is **not** an autonomous application bot, hosted OAuth service, or standalone resume generator.
 
-- Audit a company's official career page; discover only **new or unresolved** jobs and deduplicate by requisition ID/normalized URL.
-- Rank jobs by **your** technologies, experience, geography and career preferences, with direct official links and explicit hard-requirement gaps.
-- Record Interested/Skip decisions without mistaking them for an actual submission.
-- Once **you choose a role**, tailor an independent Google Doc from your real resume and story bank; verify a one-page PDF when PDF export/rendering tools are available.
-- Only when **you confirm submitting**, update both prospective-job and actual-application records.
+## Primary workflow
 
-## Quick start: bring your own profile and Google links
+```text
+JD (official link or pasted text)
+          +
+Candidate Profile + Base/Master Resume(s) + Career Story Bank
+          |
+   JD requirements & evidence matching
+          |
+Select best resume base + propose scoped edits
+          |
+     Human reviews material rewrites
+          |
+Copy original Google Doc → tailored Google Doc in output folder
+          |
+Export / render PDF → verify page count & visual layout
+          |
+Share Google Doc, verified PDF (if supported) & change log
+```
 
-**You provide:** (1) a candidate profile, (2) a Google Sheet tracker link, (3) a master-resume Google Doc link, (4) a career-story Google Doc link, and (5) a Drive folder link for tailored resumes.
+**Never** invent skills, remove accomplishments silently, change a master/base resume, or claim that a PDF is one page without checking its rendered pages. Applications are **never** submitted automatically.
 
-**Your assistant needs:** connected Google Sheets, Google Docs and Drive permissions for these exact files, and a way to inspect official careers/ATS pages. A browser/web capability is required for job verification. PDF rendering/export is required to claim a one-page validation.
+## Quick start: JD + your own resume
 
-1. Download/clone this repository or install the packaged `skill.zip` in a compatible skill-capable assistant. **Cloning alone does not create an agent or grant any app access.**
-2. Ask: `Read SKILL.md and help me set up Job Application Manager. Ask for my profile and Google resource links; do not write anything yet.`
-3. Optionally copy `config/profile.example.json` to `config/profile.local.json` and `config/resources.example.json` to `config/resources.local.json`. Your AI can help fill them by asking questions. Local files are ignored by Git.
-4. Connect your Google account through your assistant's official connector/OAuth flow and grant access to the referenced Sheet, Docs and folder. **Never paste passwords, API keys or OAuth tokens into chat, YAML, JSON or GitHub.**
-5. Validate the config structure locally (Python standard library only):
+1. Clone or download this repository, or install its skill bundle in a compatible skill-capable assistant. Copying files alone does not connect Google or create a running agent.
+2. Tell your assistant: **"Read SKILL.md. Help me configure AI Resume Tailoring Agent. Do not edit any documents yet."**
+3. Provide:
+   - **Candidate Profile:** target roles, experience level, technologies, location/preferences and editing restrictions (or answer a few onboarding questions).
+   - **Job Description:** official job link **or** pasted JD text. You can supply this later on each tailoring request.
+   - **Google Docs:** **at least one** Base/Master Resume link, a Career Story Bank Doc link, and a Drive output-folder link. You may provide several Base resumes (e.g., backend/cloud/AI); the assistant should recommend the most relevant original before copying it.
+4. Connect Google Docs/Drive through the assistant's official connector/OAuth settings. The assistant checks read access to each source Doc and folder metadata before any edit. For a first document copy, confirm actual write permission with an authorized operation; metadata alone does not prove it.
+5. Start with a **read-only JD/evidence analysis**, review the proposed targeted changes, then explicitly approve document creation. **Substantial bullet rewrites or deletions require line-by-line approval.**
 
-   ```bash
-   python3 scripts/preflight.py --profile config/profile.local.json --resources config/resources.local.json
-   ```
+Optional: connect a tracker Google Sheet to discover company jobs, preserve decisions and record applications **after actual submission**. The basic JD → Resume workflow **does not need a Sheet**.
 
-6. Ask the assistant to run the **read-only connector access check** and a **one-company dry run**. Once the report looks correct, explicitly authorize permitted changes.
+### Private configuration (optional)
 
-### First-run question flow
+Copy `config/profile.example.json` → `config/profile.local.json` and `config/resources.example.json` → `config/resources.local.json`. These `*.local.json` files are Git-ignored. Do not upload personal resumes, real Google IDs, or access tokens to this public repository.
 
-Your assistant will ask, in ordinary language:
+Syntax-only preflight (Python standard library, no network/OAuth):
 
-**Profile:** What roles, experience level, primary technologies, work locations/remote policy and career priorities should the matching reflect? What requirements are hard filters versus preferences?
+```bash
+python3 scripts/preflight.py --profile config/profile.local.json --resources config/resources.local.json
+python3 -m unittest discover -s tests -v
+```
 
-**Resources:** Paste your tracker Google Sheet, master-resume Google Doc, career-story Google Doc, and destination Drive folder links. Confirm which workbook tabs store Companies, Open Jobs, and submitted Applications.
+The preflight checks the resume paths and config shape; actual Google authorization, PDF rendering and JD verification happen **in the connected assistant**, not in this script. See [onboarding and permission gates](references/setup-guide.md).
 
-**Authorization:** Connect Google through your assistant's account settings. The assistant verifies metadata and readable content; for writes, confirm compatible sheet headers and write scope. Nothing is shared publicly or submitted on your behalf.
+## A realistic example
 
-**Dry run:** Name one company to review without changes. Check discovered jobs, eligibility, status preservation and evidence gaps. Then select a job before any resume is made.
+Try a fictional role described in [sample-jd.md](examples/sample-jd.md), view the [JD-to-evidence comparison](examples/requirement-evidence-matrix.md), and inspect the [proposed edit and approval example](examples/sample-review.md). The examples are **mock data**, not claims of a live job or a completed PDF.
 
-## Example configuration
+## What is optional vs. essential?
 
-- [Fictional candidate profile](config/profile.example.json)
-- [Blank user resource bindings](config/resources.example.json)
-- [Mock job records](examples/mock-jobs.json)
-- [Illustrative company review](examples/sample-review.md)
-- [Setup and permission guide](references/setup-guide.md)
+| Capability | Needed for |
+| --- | --- |
+| Candidate Profile + one Resume Doc + Story Bank Doc | Source-backed personalization and story selection |
+| JD link **or** pasted JD | Requirement analysis |
+| Connected Google Docs/Drive + output folder | Create a native Google Doc copy |
+| Working PDF export **and** PDF viewer | Verify an actual one-page PDF |
+| Google Sheet + Sheets permission | **Optional** tracking and company/job audit |
+| Official careers browsing | **Optional** official posting verification and discovery |
+| Gmail + scheduling | **Out of scope**; separate setup, never installed automatically |
 
-## System boundaries
-
-| Operation | What executes it | Does this repo execute it automatically? |
-| --- | --- | --- |
-| Validate local configuration syntax | `scripts/preflight.py` | Yes, when you run it |
-| Review official careers/ATS pages | Your assistant's web/browser tools | No |
-| Read/write Google Sheets/Docs | Your assistant's authorized Google connectors | No |
-| Create a formatted tailored resume | Your assistant's Docs/PDF tools after approval | No |
-| Submit a job application | The user | **Never** |
-| Hourly company/job or Gmail schedules | Separately configured, authorized runtime tasks | **Not included** |
-
-The Python preflight does not contact Google, store credentials or grant permissions. Repo instructions do not guarantee an assistant has connected apps, working web access, local filesystem access or task-scheduling capabilities.
+If a source is missing, report the limitation and request it before making unsupported claims. When export/viewer is unavailable, deliver the Doc and label PDF verification **not performed**.
 
 ## Engineering safeguards
 
-Official-source provenance; stable ATS identities and normalized URLs; incremental re-review; guarded statuses; preserved manual notes; stage-by-stage approval; resume evidence checks; no invented results; permission gate; explicit report of blocked/partial work.
+- **Evidence first:** classify JD requirements as demonstrated, transferable, gap or unknown; quote source-backed achievements rather than generating plausible-sounding bullets.
+- **Human-in-the-loop:** show material before/after text for approval; preserve dense technical bullets and one-page layout unless the user authorizes changes.
+- **Non-destructive:** copy the most suitable Base Resume; never overwrite an original.
+- **Truthful verification:** Google export success is not PDF page-count proof.
+- **Small, inspectable actions:** track what changed and surface unsupported keywords or required permissions.
 
-## Privacy
+## Connected projects
 
-Only fictional configs and mock examples belong in Git. Actual links, Sheets, resumes, Story Bank, recruiting emails, personal profile, local output, and credentials stay private. Inspect changes with `git diff --cached` before committing. See [publishing checklist](references/privacy-and-security.md).
+- [ATS collector — search-job](https://github.com/sophiesun7119/search-job): separate Python/SQLite job ingestion implementation.
+- [Scheduler prompt generator](https://github.com/sophiesun7119/search-job-scheduler-prompt-tool): separate company/job discovery scheduler templates.
+- This repo: **JD matching + evidence-backed resume tailoring**. The wider lifecycle can be showcased in a separate portfolio/case-study repo.
 
-## Limitations and contributions
+## Boundaries & privacy
 
-This is an **agent instruction/skill package**, not a hosted service, desktop application, independent CLI application bot, or a fully wired OAuth client. It supports a guided connected-assistant workflow; a standalone local runtime would require separately implemented Google OAuth, ATS clients, document rendering and scheduling.
+This Skill cannot grant OAuth permissions, browse private Docs without a connector, guarantee Google Docs layout, or submit job applications. Only fictional examples/configs are public. See [privacy checklist](references/privacy-and-security.md).
 
-Check `python3 -m unittest discover -s tests -v` for configuration/identity guard tests. Use your own credentials and sources only in an authorized environment. No scheduled automations or existing repositories are changed by installing this package.
+License: [MIT](LICENSE).

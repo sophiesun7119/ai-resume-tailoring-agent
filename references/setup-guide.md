@@ -1,37 +1,45 @@
-# First-run setup, user consent, and connector gates
+# First-run setup: resume tailoring first
 
-## Intake: request only missing details
+## What to ask (conversationally, only missing fields)
 
-**Step 1 — Candidate profile**: Request target engineering roles, desired seniority/years, confirmed strengths, location/work authorization constraints (do not infer personal legal status), remote preferences, priorities, optional avoid list and contact language. Treat personal information as private; public example JSON is fictional. Accept natural-language replies and generate private configuration with user consent.
+**1. Candidate Profile** — target roles/levels, years of experience, real technical strengths, location or work constraints if helpful, languages, preferred resume bases, and editing rules. Do not infer citizenship, clearance, degrees or proficiency. Profile can be answered in chat instead of filling a JSON file.
 
-**Step 2 — Google resources**: Request these exact user-owned or shared links individually: Google Sheet tracking workbook, Master Resume Google Doc, Career Story Bank Google Doc, and Drive folder for generated resumes. If no workbook exists, ask whether the user wants an empty template. Never assume a particular person's IDs or tab names. Default tab names are Companies / Open Jobs / Applications only for a NEW workbook; existing workbook headers are authoritative.
+**2. Sources for tailored resumes** — ask for **one or more** Base/Master Resume Google Doc links and a Career Story Bank Google Doc link. A user may maintain separate Backend, Cloud, AI resumes. Ask for the destination Google Drive folder to save a new Doc. Never require a Google Sheet for the default JD-to-resume flow.
 
-**Step 3 — Official permission flow**: Instruct the user to connect/authorize Google Drive, Docs, Sheets in the host assistant (or the corresponding client application). Check that the connected identity can read metadata, target Sheets tabs and the two Docs, and list/write the destination folder (only when an authorized tool supports it). Do not request passwords, OAuth tokens or direct credentials. This skill cannot grant privileges.
+**3. JD** — accept an official job URL or pasted JD text. Job link can be sent per run. When no browsing is available, use only pasted JD and label it user-provided; don't claim opening is current or verified.
 
-**Step 4 — Permission-safe verification**: Preflight CLI validates syntax/required input but NOT OAuth scopes. Live tool probes must read metadata and headers first, without edits. Do not perform a write probe to a live user workbook without specific approval; a dedicated throwaway test spreadsheet is preferable. If a particular read or write is forbidden, mark it blocked and request a targeted grant. Verify connector access separately from mere possession of a URL.
+**4. Optional integrations** — ask **only if** user requests company discovery / application tracking for a Google Sheet URL and actual tab names. Do not automatically create sheets, schedules or inbox monitors.
 
-**Step 5 — Dry run**: Review one company using read-only existing rows and official ATS sources. Report new/unresolved vs historical records, duplicate identities, eligibility and Match reasoning, no changes. If live data unavailable, use fictional mock example, label it clearly, and do not present it as actual verification.
+**5. Authorization** — have the user connect Google Docs/Drive (and Google Sheets only for optional tracking) in the assistant/host app's **official OAuth/connector settings**. Never ask for credentials, cookies or tokens. Test read access to supplied source docs and inspect folder metadata. **Folder metadata access is not proof of write access**; only an authorized copy operation or confirmed permission verifies writes. Do not run a live write probe without approval.
 
-**Step 6 — Enable controlled actions**: Ask for explicit approval before initializing an empty sheet, appending verified new roles, recording a decision or generating a resume. A future application row requires user-confirmed submission. Never automatically create a schedule or send an application.
+**6. Read-only preview** — analyze the JD and all resume bases, compare requirements to Story Bank evidence, recommend a base and show exact proposed edits. Check which technical claims lack support. No creation or edits in preview.
 
-## Setup readiness matrix
+**7. Approval** — obtain authorization to create the independent copy. If replacing/deleting whole bullets, show verbatim before-and-after text first and await explicit approval. Save only after consent; preserve originals and verify native Doc readback and visual PDF page count if the host supports it.
 
-| Resource | Required for | Missing => |
-| --- | --- | --- |
-| Candidate profile | Personalized matching | Ask; example only with disclosure |
-| Sheet link + readable tabs | Tracking, dedup, decisions | No tracking actions |
-| Master Resume Doc | Evidence-backed tailoring | No tailored resume |
-| Career Story Bank Doc | Evidence-backed stories | Flag missing evidence; ask |
-| Output folder + write permission | Saving tailored Doc | No save claim |
-| Official careers web access | Confirming active jobs | Preliminary review only |
-| Docs export + PDF viewer | Verified one-page resume | Don't claim verified |
+## Setup readiness
 
-## Example user conversation
+| Input/tool | JD analysis | Saved native Doc | Verified PDF | Optional tracking |
+| --- | --- | --- | --- | --- |
+| Candidate profile | Required | Required | Required | Recommended |
+| JD link or text | Required per request | Required per request | Required | For review, can use company name instead |
+| At least one Base Resume | Required for evidence-backed editing | Required | Required | Not required |
+| Career Story Bank | Recommended; report missing evidence if unavailable | Required for full story-backed tailoring | Required for story-backed output | Not required |
+| Output Drive folder | Not required | Required | Required for saved Doc | Not required |
+| Google Docs/Drive permission | Not needed for pasted text analysis | Required | Required | Not required |
+| PDF export AND page rendering | Not required | Not required | Required for page-count claim | Not required |
+| Google Sheet + Sheets permission | Not required | Not required | Not required | Required |
 
-Assistant: "Let's set up your personal Job Application Manager. What engineering roles are you targeting, which tools have you used professionally, and where do you want to work?"
+## Two example interactions
 
-User: "Backend and platform roles; Python, AWS, SQL; US remote preferred."
+**Basic (no tracker):**
+- User: "Tailor my resume for this pasted backend JD."
+- Assistant: "Please share your backend resume Doc, Career Story Bank Doc, and output folder, and authorize Google Docs/Drive. I'll first map JD requirements to real evidence and suggest edits. I won't overwrite your original."
+- Assistant: "The backend base best matches this JD. These two changes are supported; one significant bullet rewrite needs your approval. No document has been modified yet."
 
-Assistant: "Please share your tracker Sheet link, master-resume Doc, story-bank Doc, and Drive output-folder link. I'll read them only after you authorize the Google connection."
+**With tracker (optional):**
+- User: "Review ExampleCloud's official careers and rank the new roles from my Sheet."
+- Assistant: "Please connect your tracker Sheet and confirm tab names. I'll preserve Applied/Skip/Closed, review new/unprocessed roles, then wait for your selection before tailoring."
 
-Assistant (after connected reads): "I can read 3 required tabs and both Docs. Folder access is confirmed. I have not changed anything. Which company should I audit in dry-run mode?"
+## Private config
+
+`config/profile.local.json` and `config/resources.local.json` are private and Git-ignored. Source examples are **fictional only**. Run `python3 scripts/preflight.py --profile ... --resources ...` for resume-save configuration. It validates syntax, **not** actual Google access. Use `--mode analysis` for JD discussion without output folder, and `--mode tracking` only if tracker Sheets are configured.

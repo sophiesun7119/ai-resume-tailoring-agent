@@ -1,3 +1,3 @@
 interface:
-  display_name: "Job Application Manager"
-  short_description: "Human-approved job review, resume tailoring, and application tracking."
+  display_name: "AI Resume Tailoring Agent"
+  short_description: "Match JDs to real experience and create human-approved, formatted resumes."

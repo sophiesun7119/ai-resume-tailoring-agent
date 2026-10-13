@@ -1,41 +1,43 @@
 ---
-name: job-application-manager
-description: Configure and operate an evidence-based, human-approved job application review workflow using a candidate profile and user-authorized Google Sheets, Google Docs, and Google Drive folder. Use when someone wants to set up their job tracker, review a company and official ATS jobs, rank fits, mark interests/skips, tailor a resume after selection, or record a confirmed application. Require first-run onboarding and connector checks before live writes.
+name: ai-resume-tailoring-agent
+description: Tailor resumes to a supplied job description using a candidate profile, one or more authorized Base/Master Resume Google Docs, and a Career Story Bank. Use for JD skill-gap analysis, evidence-to-bullet matching, choosing the best resume base, proposing human-reviewed edits, creating an independent formatted Google Doc, and verifying a one-page PDF when tools permit. Company-job discovery and application tracking are optional, not required.
 ---
 
-# Job Application Manager
+# AI Resume Tailoring Agent
 
-## Purpose
-Run the user-controlled, on-demand lifecycle from company review to confirmed application tracking. This skill is an instruction-driven integration, NOT a self-running daemon, scheduler, applicant-bot, or OAuth implementation. The assistant's actual connector permissions determine which stages are possible.
+## Core promise
+Transform an **already selected** JD (official URL or pasted text) into an **evidence-backed proposed resume revision**. When approved and tools permit, produce a **new** Google Doc in the user's folder and a PDF with **verified actual page count**. This is an instruction-based skill for a connected assistant; not a standalone browser/OAuth implementation or automated application-submission tool.
 
-## First run: mandatory onboarding
-1. Read [setup-guide.md](references/setup-guide.md). Never use creator-specific defaults or hardcoded IDs. If no user profile and resource bindings are provided, ask for the missing inputs in small conversational groups, starting with the profile and the Google Sheet/Docs/folder links.
-2. Read `config/profile.local.json` and `config/resources.local.json` if present and user-authorized, or collect equivalent values in chat. `config/*.example.json` are fictional templates, not connected accounts. Do not publish local config.
-3. Verify live Google connector identity and authorization using read-only metadata, current Sheets tabs/headers, source Google Docs and target Drive folder. A CLI preflight only checks input syntax; it does NOT verify access. On a missing permission, report the required access and stop before dependent operations.
-4. Establish required application tables and status semantics based on [database-rules.md](references/database-rules.md). **Never rewrite a populated schema automatically.** New empty tables/headers require explicit authorization and confirmation.
-5. Perform a no-write, one-company dry run with official careers evidence. Summarize what was read, what was blocked, and what user action remains. Switch to controlled writes only with appropriate consent.
-6. Do not install or modify any scheduled task or run an hourly Gmail listener without a separate explicit request.
+## First-run setup
+1. Read [setup-guide](references/setup-guide.md). Collect only missing profile fields and sources in conversation; never use the public fictional example as a real user's identity.
+2. Require a JD (link or pasted text), **at least one** Base/Master Resume, Career Story Bank, and a candidate profile for comprehensive evidence matching. The JD may arrive at request time rather than setup.
+3. Request a Google Drive output folder **only when saving a Google Doc**. If source Docs, export or write tools are unavailable, perform read-only reasoning on user-provided content and disclose limits; never fabricate a saved link.
+4. Google Sheet, Companies/Open Jobs/Applications tabs, official job discovery, and Gmail are **optional**. Do not require a tracker for tailoring.
+5. Verify source access, actual content, and output-folder metadata through an authorized Google connector before editing. Link syntax validation does not prove OAuth permissions or write access. Never ask for passwords, access tokens or API secrets.
+6. Begin with a read-only evidence/keyword-gap review and a change proposal; do not create a resume just because setup succeeded.
 
-## Commands / intent routing
-- `Review Company: <company>` -> [company-audit.md](references/company-audit.md): existing tracker audit, official jobs, incremental review, dedup, fit ranking, official links. No resume creation until the user selects positions.
-- `Interested`, `Skip`, `Apply later` -> [decision-tracking.md](references/decision-tracking.md): track explicit decision only; intention is never actual submission.
-- `Tailor resume for <selected role>` -> [resume-story.md](references/resume-story.md): read live official JD, master resume, story bank, and preserve formatting in an independent document, with PDF visual/page-count validation if supported.
-- `I submitted my application` -> [decision-tracking.md](references/decision-tracking.md): confirm job identity, update both Open Jobs and Applications without duplicates.
-- `Status / Continue review` -> read the current workbook and prior decisions; avoid reprocessing historical Applied/Skip/Closed entries.
+## JD-to-resume flow
+Read [resume-story.md](references/resume-story.md), then:
+1. Capture JD, job/company/title and constraints. If pasted, identify it as user-provided and do not claim live opening verification.
+2. Read **all supplied Base Resume Docs** and Story Bank; select the strongest base for the JD while preserving real content. The user can override the selection.
+3. Map key requirements to **exact** source evidence, marking direct / transferable / missing / unverified. Never manufacture years, technologies, model ownership, production outcomes or numeric improvements.
+4. Present prioritized **small, literal edits** and reason for each. **Wait for explicit user approval before rewriting/replacing whole bullets, deleting material, or altering a Story Bank**. The user may authorize particular scoped keyword additions. Explicitly honor their stricter editing preferences.
+5. After approval, **copy the original native document** to an independent target in the requested Drive folder; edit only approved text while preserving fonts, headings, indentations, spacing, margins, page layout and all untouched bullets.
+6. Re-read edited areas. Export PDF **and inspect the actual page count and visual rendering**. If page two overflows, propose layout adjustments or ask to revise scope; never remove unapproved material to force one page. Do not claim success from export file size alone.
+7. Return the Google Doc link, PDF only if actually created/verified, real page count or `unverified`, exact change summary and remaining JD gaps. Never submit an application.
 
-## Always enforce
-- Do not auto-submit job applications or autonomously change user decisions.
-- Protect manual statuses, notes, first-seen dates, formulas, and original resume/story documents.
-- Use official careers/ATS IDs and normalized URLs; report uncertainty and partial scan coverage.
-- Separate prospective openings from actually submitted applications.
-- Never fabricate skills, numbers, production claims, job availability, PDF fit, or action success.
-- Do not expose real profiles, private Google links, emails, secrets, or resumes in output samples or public repositories.
-- Only call actions actually available in the hosting environment. If unsupported, deliver a review and precise setup instructions, not a pretend completion.
+## Optional extensions
+- `Review Company: <company>`: when requested and an authorized Sheet exists, see [company-audit](references/company-audit.md). Report new/unresolved official jobs and ask which role(s) to tailor. Without a tracker, a direct JD is sufficient.
+- `Track Interested/Skip/Applied`: only when explicit and connected Sheet exists; see [decision-tracking](references/decision-tracking.md) and [database-rules](references/database-rules.md). Never equate resume creation or interest with submission.
+- Never modify existing scheduled automations or enable email scanning on this skill's behalf.
+
+## Absolute safeguards
+Never overwrite Base/Master Docs, misstate official job status, invent experience or PDF verification, silently change previously approved decisions, reveal private resources in public samples, or perform unapproved external writes. State precisely what is blocked or unverified.
 
 ## References
-- [Setup and permissions](references/setup-guide.md)
-- [Company audit](references/company-audit.md)
-- [Database and fields](references/database-rules.md)
-- [User decisions and applications](references/decision-tracking.md)
-- [Resume and evidence](references/resume-story.md)
-- [Security and publishing](references/privacy-and-security.md)
+- [Onboarding and permissions](references/setup-guide.md)
+- [Resume evidence, edits and PDF QA](references/resume-story.md)
+- [Optional company audit](references/company-audit.md)
+- [Optional tracking schema](references/database-rules.md)
+- [Optional decision handling](references/decision-tracking.md)
+- [Public privacy rules](references/privacy-and-security.md)

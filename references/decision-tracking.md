@@ -1,17 +1,14 @@
-# User decisions vs. submitted applications
+# Optional human decisions and application tracking
 
-## Explicit choices
-- `Interested`, `plan to apply`, `Apply job #1 later`: after resolving a stable job ID/URL, set review state Interested where permitted, preserving old notes. Do NOT create a submitted application row.
-- `Skip`: preserve stated reason verbatim or summarized faithfully in appended notes; never create Applications row.
-- `Closed`: only when official evidence supports closure and handling respects old Applied/Skip decisions. Preserve the historical decision if re-reviewing availability.
-- No response to a recommendation means `New`, not Skip.
+For **JD-to-resume tailoring without a tracker**, decisions are simply approval to edit/copy the resume; do **not** require or create application records.
 
-## Confirmed submission
-Only after an unambiguous explicit submission confirmation or a trustworthy confirmation the user asks to record:
-1. Verify the company/title/ATS ID against current Open Jobs and Applications.
-2. Mark matching prospective role Applied, preserving notes/history.
-3. Insert or update Applications for the actual attempt; preserve dates, old emails, previous stages and manually authored fields. Deduplicate by stable role and attempt when repeat applications are possible.
-4. Re-read both places and report actual updates; do not invent a confirmation from a generated resume.
+When the user **opted into** a connected Google Sheet tracker:
 
-## Gmail (optional, separate connector)
-With explicit user authorization and a separately defined Gmail reconciliation workflow, track stage transitions and actionable replies. Match unambiguously; avoid status regression; retain processed/reviewable mail and append history. Never create a submitted application from an email alone without corroboration. Gmail is NOT required for base manager setup.
+- `Interested` / `Apply later` means prospective intent only. If the specific role is identified and the user requests it, preserve existing row notes and set Interested where the schema supports it.
+- `Skip` records an explicit opt-out; never infer Skip from silence.
+- `Closed` requires official evidence where possible; temporary ATS errors do not establish closed.
+- `Applied` requires an explicit actual submission confirmation or reliable evidence the user asks you to record. A tailored Doc or resume download is never proof of submission.
+
+Upon confirmed submission: read current Open Jobs and Applications, identify the exact job by ATS ID/URL and attempt, deduplicate, preserve status history, write only after authorization, and re-read both tables to confirm outcome. Retain manual fields.
+
+Gmail classification and periodic monitoring are separate workflows requiring their own user request, access permissions and status-precedence policy. Do not configure either by default. No automatic job submission.

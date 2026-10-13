@@ -1,19 +1,19 @@
 {
-  "resources_version": 1,
-  "tracker_spreadsheet_url": "",
+  "resources_version": 2,
   "master_resume_doc_url": "",
+  "base_resume_doc_urls": [],
   "career_story_bank_doc_url": "",
   "resume_output_folder_url": "",
+  "tracker_spreadsheet_url": "",
   "sheet_tabs": {
     "companies": "Companies",
     "open_jobs": "Open Jobs",
     "applications": "Applications"
   },
   "permissions": {
-    "sheet_read": false,
-    "sheet_write": false,
     "docs_read": false,
     "folder_write": false,
+    "sheet_read": false,
     "official_careers_web_access": false
   }
 }

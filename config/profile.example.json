@@ -1,5 +1,5 @@
 {
-  "profile_version": 1,
+  "profile_version": 2,
   "name": "Example Candidate (fictional)",
   "career": {
     "target_roles": [
@@ -21,32 +21,34 @@
       "PostgreSQL",
       "Docker"
     ],
+    "resume_base_preference": "Choose best matching base after JD evidence review; user can override",
     "exclude_claims_not_evidenced": true
   },
   "preferences": {
     "country": "United States",
     "home_region": "Example City, ST",
     "remote": "preferred",
-    "allowed_locations": [
-      "US Remote",
-      "Example City, ST"
-    ],
     "hard_constraints": [
       "US-based opportunities"
     ],
-    "company_tiers": [
-      "A",
-      "B",
-      "C"
-    ]
+    "response_language": "en"
   },
-  "scoring": {
-    "technical_fit": 35,
-    "experience_fit": 20,
-    "location": 20,
-    "company_priority": 15,
-    "compensation_and_direction": 10
+  "resume_editing": {
+    "copy_base_document": true,
+    "preserve_formatting": true,
+    "preserve_all_existing_experience_bullets": true,
+    "require_verbatim_approval_for_whole_bullet_rewrites": true,
+    "require_approval_for_deletions": true,
+    "require_one_page_pdf_verification": true
   },
-  "response_language": "en",
-  "time_zone": "America/New_York"
+  "optional_job_tracking": {
+    "enabled": false,
+    "scoring": {
+      "technical_fit": 35,
+      "experience_fit": 20,
+      "location": 20,
+      "company_priority": 15,
+      "compensation_and_direction": 10
+    }
+  }
 }
